@@ -68,7 +68,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, redisClient *redis.Client, cfg
 	oauthHandler := handler.NewOAuthHandler(oauthProviderService, userRepo)
 
 	// Apply global middleware
-	router.Use(middleware.CORSMiddleware())
+	router.Use(middleware.CORSMiddleware(cfg))
 	router.Use(middleware.SecurityMiddleware()) // Security headers
 
 	// Swagger Documentation (Custom UI)

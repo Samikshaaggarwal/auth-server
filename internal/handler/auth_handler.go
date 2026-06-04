@@ -516,7 +516,8 @@ func (h *AuthHandler) GoogleLogin(c *gin.Context) {
 	}
 
 	// Store state in cookie for verification
-	c.SetCookie("oauth_state", state, 3600, "/", "", false, true) // Secure should be true in prod
+	isProd := gin.Mode() == gin.ReleaseMode
+	c.SetCookie("oauth_state", state, 3600, "/", "", isProd, true)
 
 	url, err := h.oauthService.GetGoogleAuthURL(clientID, state)
 	if err != nil {
@@ -547,7 +548,8 @@ func (h *AuthHandler) GoogleCallback(c *gin.Context) {
 	}
 
 	// Clear state cookie
-	c.SetCookie("oauth_state", "", -1, "/", "", false, true)
+	isProd := gin.Mode() == gin.ReleaseMode
+	c.SetCookie("oauth_state", "", -1, "/", "", isProd, true)
 
 	// Exchange code
 	token, err := h.oauthService.ExchangeGoogleCode(c.Request.Context(), clientID, code)
@@ -607,7 +609,8 @@ func (h *AuthHandler) GitHubLogin(c *gin.Context) {
 	}
 
 	// Store state in cookie for verification
-	c.SetCookie("oauth_state", state, 3600, "/", "", false, true) // Secure should be true in prod
+	isProd := gin.Mode() == gin.ReleaseMode
+	c.SetCookie("oauth_state", state, 3600, "/", "", isProd, true)
 
 	url, err := h.oauthService.GetGitHubAuthURL(clientID, state)
 	if err != nil {
@@ -637,7 +640,8 @@ func (h *AuthHandler) GitHubCallback(c *gin.Context) {
 	}
 
 	// Clear state cookie
-	c.SetCookie("oauth_state", "", -1, "/", "", false, true)
+	isProd := gin.Mode() == gin.ReleaseMode
+	c.SetCookie("oauth_state", "", -1, "/", "", isProd, true)
 
 	token, err := h.oauthService.ExchangeGitHubCode(c.Request.Context(), clientID, code)
 	if err != nil {
