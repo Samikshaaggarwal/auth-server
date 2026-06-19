@@ -224,8 +224,8 @@ func (s *AuthService) UpdateProfile(userID string, req *dto.UpdateProfileRequest
 }
 
 // GetUserAuditLogs proxies the call to audit service
-func (s *AuthService) GetUserAuditLogs(userID string) ([]models.AuditLog, error) {
-	return s.auditService.GetUserAuditLogs(userID)
+func (s *AuthService) GetUserAuditLogs(userID string, page, limit int) (*dto.AuditLogsResponse, error) {
+	return s.auditService.GetUserAuditLogs(userID, page, limit)
 }
 
 // ChangePassword changes the user's password

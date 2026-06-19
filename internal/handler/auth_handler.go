@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/roshankumar0036singh/auth-server/internal/dto"
@@ -249,6 +250,8 @@ func (h *AuthHandler) DeleteAccount(c *gin.Context) {
 // @Tags auth
 // @Accept json
 // @Produce json
+// @Param page query int false "Page number (default: 1)"
+// @Param limit query int false "Items per page (default: 20, max: 100)"
 // @Success 200 {object} utils.Response
 // @Router /api/auth/audit-logs [get]
 func (h *AuthHandler) GetAuditLogs(c *gin.Context) {
@@ -258,7 +261,33 @@ func (h *AuthHandler) GetAuditLogs(c *gin.Context) {
 		return
 	}
 
-	logs, err := h.authService.GetUserAuditLogs(userID.(string))
+	page := 1   //set to default
+	limit := 20 //set to default
+
+	if pageStr := c.Query("page"); pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil {
+			page = p
+		}
+	}
+
+	if limitStr := c.Query("limit"); limitStr != "" {
+		if l, err := strconv.Atoi(limitStr); err == nil {
+			limit = l
+		}
+	}
+
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = 20
+	}
+
+	if limit > 100 {
+		limit = 100
+	}
+
+	logs, err := h.authService.GetUserAuditLogs(userID.(string), page, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.ErrorResponse("Failed to retrieve audit logs", err))
 		return
